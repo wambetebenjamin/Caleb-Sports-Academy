@@ -1,0 +1,1 @@
+export default function robots(){const base=process.env.NEXT_PUBLIC_SITE_URL||'https://calebsportsacademy.example';return {rules:process.env.SITE_LAUNCH_READY==='true'?{userAgent:'*',allow:'/',disallow:['/tracker','/api/','/book']}:{userAgent:'*',disallow:'/'},sitemap:base+'/sitemap.xml'}}

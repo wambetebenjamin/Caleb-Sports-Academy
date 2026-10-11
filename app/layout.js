@@ -1,0 +1,7 @@
+import '@fontsource/mukta/300.css';
+import '@fontsource/mukta/400.css';
+import '@fontsource/mukta/700.css';
+import './globals.css';
+import { Header, Footer, Utilities } from '../components/Shell';
+export const metadata={metadataBase:new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://calebsportsacademy.example'),title:{default:'Caleb Sports Academy | Building Champions in Nairobi',template:'%s | Caleb Sports Academy'},description:'Youth football, athletics, basketball and swimming in Nairobi. Explore programmes, book a trial and help a young athlete thrive.',robots:{index:process.env.SITE_LAUNCH_READY==='true',follow:process.env.SITE_LAUNCH_READY==='true'}};
+export default function RootLayout({children}) { const schema={'@context':'https://schema.org','@type':['SportsActivityLocation','LocalBusiness'],name:'Caleb Sports Academy',telephone:'+254112272061',address:{'@type':'PostalAddress',addressLocality:'Nairobi',addressCountry:'KE'}};return <html lang="en-KE"><head><link rel="stylesheet" href="/vendor/css/bootstrap.min.css"/><link rel="stylesheet" href="/vendor/fonts/icomoon/style.css"/><link rel="stylesheet" href="/vendor/css/style.css"/></head><body><a className="skip-link" href="#main">Skip to content</a><Header/><main id="main">{children}</main><Footer/><Utilities/><script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema).replace(/</g,'\\u003c')}}/></body></html>}
