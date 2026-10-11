@@ -1,0 +1,2 @@
+import {sports,posts} from '../lib/data';
+export default function sitemap(){const base=process.env.NEXT_PUBLIC_SITE_URL||'https://calebsportsacademy.example';return ['','/programmes','/book','/scholarships','/sponsors','/contact','/coach-application','/events','/blog',...sports.map(s=>'/programmes/'+s.slug),...posts.map(p=>'/blog/'+p.slug),'/image-credits','/legal/privacy-policy','/legal/terms','/legal/cookie-policy'].map(path=>({url:base+path,changeFrequency:path.startsWith('/blog/')?'monthly':'weekly',priority:path===''?1:0.7}))}

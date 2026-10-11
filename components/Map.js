@@ -1,0 +1,3 @@
+'use client';
+import {useState} from 'react';
+export default function Map(){const [show,setShow]=useState(false);const url=process.env.NEXT_PUBLIC_MAP_EMBED_URL;return <div className="map-consent"><span className="eyebrow">FIND YOUR WAY HERE</span><h3>Nairobi, Kenya</h3>{!url?<p>The academy’s exact training ground address and map are awaiting confirmation. Please call +254 112 272 061 before travelling.</p>:show?<iframe src={url} title="Caleb Sports Academy training ground map" loading="lazy" referrerPolicy="no-referrer"/>:<><p>Loading the map connects to Google and shares your IP address. Only load it if you agree.</p><button className="outline-button" onClick={()=>setShow(true)}>Load Google map</button></>}</div>}

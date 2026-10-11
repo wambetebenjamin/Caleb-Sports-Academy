@@ -1,0 +1,15 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {schemas,validSlot} from '../lib/validation.mjs';
+const booking={sport:'football',ageGroup:'10–13',slotId:'football-01',athleteName:'Test Athlete',dob:'2014-06-01',gender:'Prefer not to say',school:'Test School',parentName:'Test Parent',phone:'+254700000000',email:'parent@example.com',emergencyContact:'+254711111111',consent:true};
+test('valid guardian-approved booking passes',()=>assert.equal(schemas.booking.safeParse(booking).success,true));
+test('guardian consent is mandatory',()=>assert.equal(schemas.booking.safeParse({...booking,consent:false}).success,false));
+test('malformed email is rejected',()=>assert.equal(schemas.booking.safeParse({...booking,email:'not-an-email'}).success,false));
+test('athletes outside age range are rejected',()=>{for(const dob of ['2025-01-01','1990-01-01','2014-02-30'])assert.equal(schemas.booking.safeParse({...booking,dob}).success,false)});
+test('booking payload drops unknown fields',()=>assert.equal(schemas.booking.parse({...booking,role:'coach'}).role,undefined));
+test('scholarship link must use HTTPS',()=>{const d={athleteName:'Test Athlete',age:12,sport:'athletics',school:'Test School',parentName:'Test Parent',email:'test@example.com',phone:'+254700000000',achievements:'Several school track competitions completed.',performanceLink:'http://example.com/video',consent:true};assert.equal(schemas.scholarship.safeParse(d).success,false);assert.equal(schemas.scholarship.safeParse({...d,performanceLink:'https://example.com/video'}).success,true)});
+test('newsletter needs separate adult consent',()=>assert.equal(schemas.newsletter.safeParse({email:'test@example.com'}).success,false));
+test('tracker enforces sport-specific metrics',()=>{const d={athleteId:'CSA-001',sport:'football',date:'2026-10-11',notes:''};assert.equal(schemas.tracker.safeParse(d).success,false);assert.equal(schemas.tracker.safeParse({...d,passAccuracy:75,sprintTime:12.5,shotsOnTarget:4}).success,true);assert.equal(schemas.tracker.safeParse({...d,passAccuracy:101,sprintTime:-1,shotsOnTarget:4}).success,false)});
+test('private athlete IDs do not allow arbitrary keys',()=>assert.equal(schemas.tracker.safeParse({athleteId:'../private',sport:'athletics',date:'2026-10-11',distance:100,personalBest:13,notes:''}).success,false));
+test('slots must be future, in group and have capacity',()=>{const slot={sport:'football',ageGroup:'10–13',remaining:1,startsAt:new Date(Date.now()+86400000).toISOString()};assert.equal(validSlot(slot,'football','10–13'),true);assert.equal(validSlot({...slot,remaining:0},'football','10–13'),false);assert.equal(validSlot(slot,'athletics','10–13'),false);assert.equal(validSlot({...slot,startsAt:'2020-01-01'},'football','10–13'),false)});
+test('invalid tracker date rejects cleanly instead of throwing',()=>assert.equal(schemas.tracker.safeParse({athleteId:'CSA-001',sport:'athletics',date:'2026-99-99',distance:100,personalBest:13,notes:''}).success,false));
